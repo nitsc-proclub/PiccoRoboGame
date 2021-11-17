@@ -23,6 +23,11 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     public string KilledEventName = null;
 
     /// <summary>
+    /// ダメージを受けた時に呼び出すVisualScriptingのCustomEventの名前
+    /// </summary>
+    public string DamagedEventName = null;
+
+    /// <summary>
     /// 最大HP
     /// </summary>
     public short MaxHP = 100;
@@ -62,7 +67,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// <param name="damage">ダメージ量(負の値で回復)</param>
     public void GiveDamageToCharacter(Character character, short damage)
     {
-        photonView.RPC(
+        character.photonView.RPC(
             nameof(GetDamageToCharacter),
             character.photonView.Owner,
             character.photonView.ViewID,
@@ -131,8 +136,16 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
         int newHP = HP;
         newHP -= damage;
 
+        // HPを更新
+        HP = (short)Math.Min(Math.Max(newHP, 0), MaxHP);
+
+        if (!string.IsNullOrEmpty(DamagedEventName))
+        {
+            CustomEvent.Trigger(gameObject, DamagedEventName);
+        }
+
         // キルされたとき
-        if (newHP <= 0)
+        if (HP <= 0)
         {
             HP = 0;
             DeadCount++;
@@ -142,9 +155,6 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
             }
             return;
         }
-
-        // HPを更新
-        HP = (short)Math.Min(newHP, MaxHP);
     }
 
     // Start is called before the first frame update
