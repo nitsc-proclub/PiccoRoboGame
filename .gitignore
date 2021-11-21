@@ -458,3 +458,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+## Photon
+
+/[Aa]ssets/Photon/*
