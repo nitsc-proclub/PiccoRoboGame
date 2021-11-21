@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CheckerBoard
-  m_Shader: {fileID: -6465566751694194690, guid: 91c44bfa4f27f6b4c9abda58f89cbd0c,
+  m_Shader: {fileID: -6465566751694194690, guid: 97f8538dcc169254482a3e07a6b85fd5,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 2
