@@ -9,12 +9,15 @@ public class DevGameManager : MonoBehaviour
 {
     private void Awake()
     {
-        foreach(var i in Enumerable.Range(1, 20))
+        if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.Instantiate(
-                "DevEnemy",
-                new(Random.Range(-12, 12), 1, Random.Range(-12, 12)),
-                Quaternion.identity);
+            foreach (var i in Enumerable.Range(1, 20))
+            {
+                PhotonNetwork.Instantiate(
+                    "DevEnemy",
+                    new(Random.Range(-12, 12), 1, Random.Range(-12, 12)),
+                    Quaternion.identity);
+            }
         }
     }
 
