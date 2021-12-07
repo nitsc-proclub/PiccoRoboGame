@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class DevGameManager : MonoBehaviour
 {
@@ -19,6 +20,12 @@ public class DevGameManager : MonoBehaviour
                     Quaternion.identity);
             }
         }
+        var player = PhotonNetwork.Instantiate(
+            "DevPlayer",
+            new(0, 0.5f, 0),
+            Quaternion.identity);
+        var script = player.GetComponent<ScriptMachine>();
+        script.enabled = true;
     }
 
     // Start is called before the first frame update

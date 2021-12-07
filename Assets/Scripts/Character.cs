@@ -47,7 +47,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             TeamID = (byte)stream.ReceiveNext();
-            HP = (byte)stream.ReceiveNext();
+            HP = (short)stream.ReceiveNext();
         }
     }
 
