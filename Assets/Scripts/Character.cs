@@ -88,6 +88,11 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
             damage);
     }
 
+    public void Destroy()
+    {
+        PhotonNetwork.Destroy(photonView);
+    }
+
     [PunRPC]
     private void GetDamageToAll(short damage)
     {
