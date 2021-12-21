@@ -7,15 +7,24 @@ using UnityEngine;
 
 public class Character : MonoBehaviourPunCallbacks, IPunObservable
 {
+    // --- ステータス ---
+
     /// <summary>
     /// チームID
     /// </summary>
-    public byte TeamID;
+    public byte TeamID = 0;
 
     /// <summary>
     /// HP
     /// </summary>
     public short HP = 100;
+
+    /// <summary>
+    /// キルされた回数
+    /// </summary>
+    public byte DeadCount { get; private set; } = 0;
+
+    // --- 設定 ---
 
     /// <summary>
     /// キルされた時に呼び出すVisualScriptingのCustomEventの名前
@@ -33,16 +42,33 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     public short MaxHP = 100;
 
     /// <summary>
-    /// キルされた回数
+    /// キルされた場合、PhotonNetwork.Destroyを自動で呼ぶ
     /// </summary>
-    public byte DeadCount { get; private set; } = 0;
+    public bool AutoDestroy = true;
+
+    // --------
+
+    private bool statusChanged = true;
+
+    private byte _TeamID = 0;
+
+    private short _HP = 100;
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if(stream.IsWriting)
         {
-            stream.SendNext(TeamID);
-            stream.SendNext(HP);
+            // 値が変わったときのみ同期
+            if(statusChanged || 
+               TeamID != _TeamID || 
+               HP != _HP)
+            {
+                TeamID = _TeamID;
+                HP = _HP;
+
+                stream.SendNext(TeamID);
+                stream.SendNext(HP);
+            }
         }
         else
         {
@@ -52,90 +78,26 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     /// <summary>
-    /// シーン中のすべてのキャラクターにダメージを与える
+    /// このキャラクターにダメージを与える
     /// </summary>
     /// <param name="damage">ダメージ量(負の値で回復)</param>
-    public void GiveDamageToAll(short damage)
+    public void GiveDamage(short damage)
     {
-        photonView.RPC(nameof(GetDamageToAll), RpcTarget.All, damage);
-    }
-
-    /// <summary>
-    /// 指定のキャラクターにダメージを与える
-    /// </summary>
-    /// <param name="character">キャラクター</param>
-    /// <param name="damage">ダメージ量(負の値で回復)</param>
-    public void GiveDamageToCharacter(Character character, short damage)
-    {
-        character.photonView.RPC(
-            nameof(GetDamageToCharacter),
-            character.photonView.Owner,
-            character.photonView.ViewID,
+        this.photonView.RPC(
+            nameof(GetDamage),
+            this.photonView.Owner,
             damage);
     }
 
     /// <summary>
-    /// 指定のチーム全員にダメージを与える
+    /// このオブジェクトを破壊する
     /// </summary>
-    /// <param name="teamID">チームID</param>
-    /// <param name="damage">ダメージ量(負の値で回復)</param>
-    public void GiveDamageToTeam(byte teamID, short damage)
-    {
-        photonView.RPC(
-            nameof(GetDamageToTeam),
-            RpcTarget.All,
-            teamID,
-            damage);
-    }
-
     public void Destroy()
     {
         PhotonNetwork.Destroy(photonView);
     }
-
+    
     [PunRPC]
-    private void GetDamageToAll(short damage)
-    {
-        if (!photonView.IsMine)
-        {
-            return;
-        }
-
-        GetDamage(damage);
-    }
-
-    [PunRPC]
-    private void GetDamageToCharacter(int targetViewID, short damage)
-    {
-        if(!photonView.IsMine)
-        {
-            return;
-        }
-
-        if(photonView.ViewID != targetViewID)
-        {
-            return;
-        }
-
-        GetDamage(damage);
-    }
-
-    [PunRPC]
-    private void GetDamageToTeam(byte targetTeamID, short damage)
-    {
-        if (!photonView.IsMine)
-        {
-            return;
-        }
-
-        if (TeamID != targetTeamID)
-        {
-            return;
-        }
-
-        GetDamage(damage);
-    }
-
     private void GetDamage(short damage)
     {
         int newHP = HP;
@@ -150,25 +112,27 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         // キルされたとき
-        if (HP <= 0)
+        if (newHP <= 0)
         {
-            HP = 0;
             DeadCount++;
             if (!string.IsNullOrEmpty(KilledEventName))
             {
                 CustomEvent.Trigger(gameObject, KilledEventName);
             }
+            if(AutoDestroy)
+            {
+                Destroy();
+            }
+            statusChanged = true;
             return;
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
