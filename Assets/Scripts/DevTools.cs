@@ -103,7 +103,10 @@ public class DevTools : MonoBehaviourPunCallbacks
     {
         foreach (var gameObj in SceneManager.GetActiveScene().GetRootGameObjects())
         {
-            gameObj.SetActive(true);
+            if (gameObj.name == "GameManager")
+            {
+                gameObj.SetActive(true);
+            }
         }
     }
 }
