@@ -6,14 +6,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
+using System.IO;
 
 public enum GamePhase
 {
     None,
     MatchMaking,
+    CountDown,
     EditScripts,
     Battle,
-    GameOver
+    GameOver,
+    Count
 }
 
 public enum Team : int
@@ -28,13 +31,45 @@ public enum Team : int
 
 public class DevGameManager : MonoBehaviourPunCallbacks
 {
+    public const int CountDownDurationMS = 1000 * 10; // 10sec
+    public const int EditScriptDurationMS = 1000 * 30; // 30sec
+
+    public int MatchTime
+    {
+        get
+        {
+            return matchTime;
+        }
+    }
+
     public GamePhase CurrentPhase { get; private set; } = GamePhase.None;
+
+    private int matchTime = 0;
+
+    private int prevServerTime;
 
     private Dictionary<int, Team> teamAssignDic = new();
 
     [SerializeField]
     private GameObject matchMakingUI;
 
+    [SerializeField]
+    private GameObject countdownUI;
+
+    [SerializeField]
+    private GameObject editScriptUI;
+
+    [SerializeField]
+    private GameObject battleUI;
+
+    void OnGUI()
+    {
+        GUILayout.Window(2, new(10, 220, 200, 1), _ =>
+        {
+            GUILayout.Label($"Phase: {CurrentPhase}");
+            GUILayout.Label($"MatchTime: {MatchTime}");
+        }, "GameState");
+    }
     void Awake()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -48,6 +83,7 @@ public class DevGameManager : MonoBehaviourPunCallbacks
             }
         }
         StartMatchMakingPhase();
+        
     }
 
     void Start()
@@ -55,9 +91,46 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         AssignTeam(PhotonNetwork.LocalPlayer, Team.Observer);
     }
 
+    private void FixedUpdate()
+    {
+        if (CurrentPhase != GamePhase.MatchMaking)
+        {
+            int currentServerTime = PhotonNetwork.ServerTimestamp;
+            matchTime += unchecked(currentServerTime - prevServerTime);
+            prevServerTime = currentServerTime;
+        }
+    }
+
     void Update()
     {
-        matchMakingUI.SetActive(CurrentPhase == GamePhase.MatchMaking);
+        switch(CurrentPhase)
+        {
+            case GamePhase.MatchMaking:
+                matchMakingUI.SetActive(true);
+                break;
+            case GamePhase.CountDown:
+                matchMakingUI.SetActive(false);
+                countdownUI.SetActive(true);
+                if (matchTime >= CountDownDurationMS)
+                {
+                    StartEditScriptsPhase();
+                }
+                break;
+            case GamePhase.EditScripts:
+                countdownUI.SetActive(false);
+                editScriptUI.SetActive(true);
+                if (matchTime >= CountDownDurationMS + EditScriptDurationMS)
+                {
+                    StartBattlePhase();
+                }
+                break;
+            case GamePhase.Battle:
+                editScriptUI.SetActive(false);
+                battleUI.SetActive(true);
+                break;
+            case GamePhase.GameOver:
+                break;
+        }
     }
 
     public Team GetAssignedTeam(Player player)
@@ -92,6 +165,19 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void RequestMatchStart()
+    {
+        photonView.RPC(nameof(MatchStartImpl), RpcTarget.AllViaServer);
+    }
+
+    [PunRPC]
+    private void MatchStartImpl(PhotonMessageInfo info)
+    {
+        StartCountDownPhase();
+        matchTime = 0;
+        prevServerTime = info.SentServerTimestamp;
+    }
+
     [PunRPC]
     private void AssignTeamImpl(int playerId, int teamId)
     {
@@ -100,18 +186,25 @@ public class DevGameManager : MonoBehaviourPunCallbacks
 
     private void StartMatchMakingPhase()
     {
+        Debug.Log("[Phase] MatchMaking");
         CurrentPhase = GamePhase.MatchMaking;
     }
 
-    [PunRPC]
+    private void StartCountDownPhase()
+    {
+        Debug.Log("[Phase] CountDown");
+        CurrentPhase = GamePhase.CountDown;
+    }
+
     private void StartEditScriptsPhase()
     {
+        Debug.Log("[Phase] EditScripts");
         CurrentPhase = GamePhase.EditScripts;
     }
 
-    [PunRPC]
     private void StartBattlePhase()
     {
+        Debug.Log("[Phase] Battle");
         CurrentPhase = GamePhase.Battle;
         CreateOwnPlayer();
     }
@@ -119,6 +212,7 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void GameOver()
     {
+        Debug.Log("[Phase] GameOver");
         CurrentPhase = GamePhase.GameOver;
     }
 

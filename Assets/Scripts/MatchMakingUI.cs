@@ -64,7 +64,7 @@ public class MatchMakingUI : MonoBehaviour
 
     public void GameStart()
     {
-
+        gameMgr.RequestMatchStart();
     }
 
     private void SyncPlayerState(GameObject obj, List<Player> list)
