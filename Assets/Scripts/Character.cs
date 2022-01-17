@@ -5,6 +5,7 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(PhotonView))]
 public class Character : MonoBehaviourPunCallbacks, IPunObservable
 {
     // --- ステータス ---
