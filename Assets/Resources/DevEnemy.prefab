@@ -117,6 +117,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Team: 5
   HP: 30
+  Display: 0
+  DisplayText: 
   KilledEventName: Killed
   DamagedEventName: GotDamage
   MaxHP: 30

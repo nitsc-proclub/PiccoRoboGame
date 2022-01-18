@@ -5,9 +5,6 @@ using UnityEngine;
 public class HealthBarFactory : MonoBehaviour
 {
     [SerializeField]
-    Canvas targetCanvas;
-
-    [SerializeField]
     HealthBar healthbarPrefab;
 
     [SerializeField]

@@ -489,6 +489,183 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &613891471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 613891479}
+  - component: {fileID: 613891478}
+  - component: {fileID: 613891477}
+  - component: {fileID: 613891476}
+  - component: {fileID: 613891475}
+  - component: {fileID: 613891474}
+  - component: {fileID: 613891473}
+  - component: {fileID: 613891472}
+  m_Layer: 0
+  m_Name: DevBase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &613891472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2fe5546f775c47d2820aa5e8a715f53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"nest":{"source":"Embed","macro":null,"embed":{"variables":{"collection":{"$content":[],"$version":"A"},"$version":"A"},"controlInputDefinitions":[],"controlOutputDefinitions":[],"valueInputDefinitions":[],"valueOutputDefinitions":[],"title":null,"summary":null,"pan":{"x":181.0732,"y":412.644},"zoom":0.5999999,"elements":[{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":-144.0},"guid":"bda4cdc0-8a94-4366-8775-33fa7a6cadc4","$version":"A","$type":"Unity.VisualScripting.Start"},{"coroutine":false,"defaultValues":{},"position":{"x":-204.0,"y":60.0},"guid":"e32ad342-c1b9-4576-97b0-31f10109a4d8","$version":"A","$type":"Unity.VisualScripting.Update"},{"argumentCount":0,"coroutine":false,"defaultValues":{"target":null,"name":{"$content":"Killed","$type":"System.String"}},"position":{"x":-235.0,"y":234.0},"guid":"18ad8394-3734-4359-b7c3-7bbdcb4bb2ef","$version":"A","$type":"Unity.VisualScripting.CustomEvent","$id":"14"},{"enumType":"Team","defaultValues":{},"position":{"x":44.0,"y":222.0},"guid":"203ee914-bab2-43e8-b777-32ce2c2bb35a","$version":"A","$type":"Unity.VisualScripting.SwitchOnEnum","$id":"16"},{"specifyFallback":false,"kind":"Object","defaultValues":{"name":{"$content":"MyTeam","$type":"System.String"},"object":null},"position":{"x":-233.0,"y":357.0},"guid":"5c6bfa03-2652-441b-a2cf-4571317601c2","$version":"A","$type":"Unity.VisualScripting.GetVariable","$id":"18"},{"chainable":false,"member":{"name":"RequestGameOver","parameterTypes":["Team"],"targetType":"DevGameManager","targetTypeName":"DevGameManager","$version":"A"},"defaultValues":{"target":null,"%winner":{"$content":"TeamB","$type":"Team"}},"position":{"x":384.0,"y":217.0},"guid":"70b1486e-513e-45ce-9499-4074811fcd87","$version":"A","$type":"Unity.VisualScripting.InvokeMember","$id":"20"},{"chainable":false,"member":{"name":"RequestGameOver","parameterTypes":["Team"],"targetType":"DevGameManager","targetTypeName":"DevGameManager","$version":"A"},"defaultValues":{"target":null,"%winner":{"$content":"TeamA","$type":"Team"}},"position":{"x":385.0,"y":376.0},"guid":"aa337adf-c15a-46fe-8633-b1c6eeb6aea4","$version":"A","$type":"Unity.VisualScripting.InvokeMember","$id":"23"},{"chainable":false,"member":{"name":"RequestGameOver","parameterTypes":["Team"],"targetType":"DevGameManager","targetTypeName":"DevGameManager","$version":"A"},"defaultValues":{"target":null,"%winner":{"$content":"TeamA","$type":"Team"}},"position":{"x":386.0,"y":534.0},"guid":"468178cd-b84c-4814-9baa-01f4e29db8e1","$version":"A","$type":"Unity.VisualScripting.InvokeMember","$id":"26"},{"specifyFallback":false,"kind":"Object","defaultValues":{"name":{"$content":"GameManager","$type":"System.String"},"object":null},"position":{"x":4.0,"y":556.0},"guid":"5643df88-1bd4-4106-846b-df66b22dc09a","$version":"A","$type":"Unity.VisualScripting.GetVariable","$id":"29"},{"sourceUnit":{"$ref":"14"},"sourceKey":"trigger","destinationUnit":{"$ref":"16"},"destinationKey":"enter","guid":"1c8d3bfd-e56a-4cd7-ac11-e7cd99eb6d16","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%TeamA","destinationUnit":{"$ref":"20"},"destinationKey":"enter","guid":"6ffd81ac-0fd0-4664-b84c-db275f6cf3aa","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%TeamB","destinationUnit":{"$ref":"23"},"destinationKey":"enter","guid":"5511b2c4-06c3-4f0b-8f9a-b5387cd52211","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%Unassigned","destinationUnit":{"$ref":"26"},"destinationKey":"enter","guid":"925f7672-62c0-4321-b18f-f5355fa20c30","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%Observer","destinationUnit":{"$ref":"26"},"destinationKey":"enter","guid":"ebfbc507-ecb9-4edc-b9a1-c45973d81d8a","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%TeamC","destinationUnit":{"$ref":"26"},"destinationKey":"enter","guid":"ef55759f-4dba-4d1d-903d-1d73187a4d48","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"16"},"sourceKey":"%NPC","destinationUnit":{"$ref":"26"},"destinationKey":"enter","guid":"80dbf057-d7f5-44f7-917a-383c9fde9db0","$type":"Unity.VisualScripting.ControlConnection"},{"sourceUnit":{"$ref":"18"},"sourceKey":"value","destinationUnit":{"$ref":"16"},"destinationKey":"enum","guid":"c448e34f-9f5e-4d71-93f6-009b758775ab","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"29"},"sourceKey":"value","destinationUnit":{"$ref":"26"},"destinationKey":"target","guid":"d2b16608-ae5d-4060-9ab0-4b47401489f0","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"29"},"sourceKey":"value","destinationUnit":{"$ref":"23"},"destinationKey":"target","guid":"3fce5cb6-e129-42b5-a765-96db5d98bd0b","$type":"Unity.VisualScripting.ValueConnection"},{"sourceUnit":{"$ref":"29"},"sourceKey":"value","destinationUnit":{"$ref":"20"},"destinationKey":"target","guid":"85b390bd-0b4a-4c45-8632-13cf0b7aa245","$type":"Unity.VisualScripting.ValueConnection"}],"$version":"A"}}}'
+    _objectReferences: []
+--- !u!114 &613891473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _data:
+    _json: '{"declarations":{"collection":{"$content":[{"name":"GameManager","value":{"$content":0,"$type":"UnityEngine.Object"},"typeHandle":{"Identification":"DevGameManager,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"},{"name":"MyTeam","value":{"$content":"Unassigned","$type":"Team"},"typeHandle":{"Identification":"Team,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null","$version":"A"},"$version":"A"}],"$version":"A"},"$version":"A"}}'
+    _objectReferences:
+    - {fileID: 739147952}
+--- !u!114 &613891474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae22bc019f3ab64eae30a4ffdb68afd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Team: 0
+  HP: 1000
+  Display: 0
+  DisplayText: 
+  KilledEventName: Killed
+  DamagedEventName: 
+  MaxHP: 1000
+  AutoDestroy: 1
+--- !u!114 &613891475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 613891474}
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!65 &613891476
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &613891477
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &613891478
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &613891479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613891471}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 21
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &636432899
 GameObject:
   m_ObjectHideFlags: 0
@@ -660,7 +837,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93cb5585396152344802700cd37ac264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overlayUI: {fileID: 0}
   matchMakingUI: {fileID: 1429830342}
   countdownUI: {fileID: 1836591072}
   editScriptUI: {fileID: 1248969220}

@@ -47,7 +47,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// DisplayKindがCustomのときに表示するテキスト
     /// </summary>
     public string DisplayText = "";
-
+    
     /// <summary>
     /// キルされた回数
     /// </summary>
@@ -135,7 +135,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         this.photonView.RPC(
             nameof(GetDamage),
-            this.photonView.Owner,
+            this.photonView.Owner ?? PhotonNetwork.MasterClient,
             damage);
     }
 

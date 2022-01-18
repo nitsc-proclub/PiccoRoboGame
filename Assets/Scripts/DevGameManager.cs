@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public enum GamePhase
 {
@@ -39,9 +40,6 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     private int prevServerTime;
 
     private Dictionary<int, Team> teamAssignDic = new();
-
-    [SerializeField]
-    private GameObject overlayUI;
 
     [SerializeField]
     private GameObject matchMakingUI;
@@ -136,6 +134,11 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public Team GetAssignedTeam()
+    {
+        return GetAssignedTeam(PhotonNetwork.LocalPlayer);
+    }
+
     public Team GetAssignedTeam(Player player)
     {
         return teamAssignDic.GetValueOrDefault(player.ActorNumber, Team.Unassigned);
@@ -173,12 +176,23 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         photonView.RPC(nameof(MatchStartImpl), RpcTarget.AllViaServer);
     }
 
+    public void RequestGameOver(Team winner)
+    {
+        photonView.RPC(nameof(GameOverImpl), RpcTarget.AllViaServer);
+    }
+
     [PunRPC]
     private void MatchStartImpl(PhotonMessageInfo info)
     {
         StartCountDownPhase();
         matchTime = 0;
         prevServerTime = info.SentServerTimestamp;
+    }
+
+    [PunRPC]
+    private void GameOverImpl()
+    {
+        GameOver();
     }
 
     [PunRPC]
@@ -209,7 +223,12 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("[Phase] Battle");
         CurrentPhase = GamePhase.Battle;
-        CreateOwnPlayer();
+        var team = GetAssignedTeam();
+        if (team == Team.TeamA || team == Team.TeamB)
+        {
+            CreateOwnPlayer();
+        }
+        ActivateBattleManager();
     }
 
     [PunRPC]
@@ -219,19 +238,19 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         CurrentPhase = GamePhase.GameOver;
     }
 
-    private void CreateOwnPlayer()
+    private void ActivateBattleManager()
     {
-        var player = PhotonNetwork.Instantiate(
-            "DevPlayer",
-            new(0, 0.5f, 0),
-            Quaternion.identity);
-        player.GetComponent<ScriptMachine>().enabled = true;
-
-        var character = player.GetComponent<Character>();
-        character.Team = GetAssignedTeam(PhotonNetwork.LocalPlayer);
-        character.Display = DisplayKind.OwnerName;
-
-        healthBarFactory.AssignToCharacter(character, 50);
+        foreach (var gameObj in SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (gameObj.name == "BattleManager")
+            {
+                gameObj.SetActive(true);
+            }
+        }
     }
 
+    private void CreateOwnPlayer()
+    {
+        
+    }
 }

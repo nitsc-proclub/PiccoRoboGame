@@ -4,9 +4,9 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - targetCanvas: {instanceID: 0}
-  - healthbarPrefab: {fileID: 9114668909824341666, guid: 26c6b5adea8446a41b3f1bc57f7730d1,
+  - healthbarPrefab: {fileID: 5670602740815214846, guid: 26c6b5adea8446a41b3f1bc57f7730d1,
       type: 3}
+  - overlayCamera: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
