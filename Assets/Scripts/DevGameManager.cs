@@ -78,7 +78,10 @@ public class DevGameManager : MonoBehaviourPunCallbacks
                     "DevEnemy",
                     new(Random.Range(-12, 12), 1, Random.Range(-12, 12)),
                     Quaternion.identity);
-                healthBarFactory.AssignToCharacter(enemy);
+                var character = enemy.GetComponent<Character>();
+                healthBarFactory.AssignToCharacter(character);
+                character.Display = DisplayKind.Custom;
+                character.DisplayText = $"Enemy{i}";
             }
         }
 
@@ -222,10 +225,13 @@ public class DevGameManager : MonoBehaviourPunCallbacks
             "DevPlayer",
             new(0, 0.5f, 0),
             Quaternion.identity);
-        healthBarFactory.AssignToCharacter(player, 50);
-
         player.GetComponent<ScriptMachine>().enabled = true;
-        player.GetComponent<Character>().Team = GetAssignedTeam(PhotonNetwork.LocalPlayer);
+
+        var character = player.GetComponent<Character>();
+        character.Team = GetAssignedTeam(PhotonNetwork.LocalPlayer);
+        character.Display = DisplayKind.OwnerName;
+
+        healthBarFactory.AssignToCharacter(character, 50);
     }
 
 }

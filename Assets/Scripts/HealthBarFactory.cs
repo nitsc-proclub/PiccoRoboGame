@@ -13,13 +13,12 @@ public class HealthBarFactory : MonoBehaviour
     [SerializeField]
     Camera overlayCamera;
 
-    public void AssignToCharacter(GameObject obj, float offsetY = 60)
+    public void AssignToCharacter(Character character, float offsetY = 60)
     {
-        var character = obj.GetComponent<Character>();
-
         var barInstance = Instantiate(healthbarPrefab);
 
-        barInstance.Initialize(character.transform, overlayCamera, offsetY);
+        barInstance.Initialize(character.transform, overlayCamera);
+        barInstance.Offset = offsetY;
 
         character.gameObject
             .AddComponent<HealthBarClient>()

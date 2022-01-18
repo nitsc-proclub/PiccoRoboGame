@@ -5,6 +5,13 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum DisplayKind : byte
+{
+    None,
+    OwnerName,
+    Custom
+}
+
 public enum Team : byte
 {
     Unassigned,
@@ -30,6 +37,16 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// HP
     /// </summary>
     public short HP = 100;
+
+    /// <summary>
+    /// 表示名の種類
+    /// </summary>
+    public DisplayKind Display = DisplayKind.None;
+
+    /// <summary>
+    /// DisplayKindがCustomのときに表示するテキスト
+    /// </summary>
+    public string DisplayText = "";
 
     /// <summary>
     /// キルされた回数
@@ -62,6 +79,8 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     private bool statusChanged = true;
 
+    private DisplayKind _Display = DisplayKind.None;
+
     private Team _Team = 0;
 
     private short _HP = 100;
@@ -70,22 +89,41 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(stream.IsWriting)
         {
+            bool displayChanged = Display != _Display;
+
             // 値が変わったときのみ同期
-            if(statusChanged || 
+            if (statusChanged ||
+               displayChanged ||
                Team != _Team || 
                HP != _HP)
             {
                 Team = _Team;
                 HP = _HP;
+                Display = _Display;
 
                 stream.SendNext((byte)Team);
                 stream.SendNext(HP);
+                stream.SendNext((byte)Display);
+
+                bool sendDisplayText = displayChanged && Display == DisplayKind.Custom;
+                stream.SendNext(sendDisplayText);
+                if (sendDisplayText)
+                {
+                    stream.SendNext(DisplayText);
+                }
             }
         }
         else
         {
             Team = (Team)(byte)stream.ReceiveNext();
             HP = (short)stream.ReceiveNext();
+            Display = (DisplayKind)(byte)stream.ReceiveNext();
+
+            bool recieveDisplayText = (bool)stream.ReceiveNext();
+            if (recieveDisplayText)
+            {
+                DisplayText = (string)stream.ReceiveNext();
+            }
         }
     }
 
@@ -108,7 +146,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         PhotonNetwork.Destroy(photonView);
     }
-    
+
     [PunRPC]
     private void GetDamage(short damage)
     {

@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +38,15 @@ public class HealthBarClient : MonoBehaviour
         healthbar.HP = character.HP;
         healthbar.MaxHP = character.MaxHP;
         healthbar.BarColor = teamColors[(byte)character.Team];
+        healthbar.DisplayName = character.Display switch
+        {
+            DisplayKind.None => "",
+            DisplayKind.OwnerName => string.IsNullOrEmpty(PhotonNetwork.LocalPlayer.NickName)
+                ? PhotonNetwork.LocalPlayer.UserId
+                : PhotonNetwork.LocalPlayer.NickName,
+            DisplayKind.Custom => character.DisplayText,
+            _ => ""
+        };
     }
 
     void OnDestroy()

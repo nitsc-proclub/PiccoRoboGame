@@ -5,19 +5,68 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    public Color BarColor { get; set; } = new Color(0.45f, 0.89f, 0.26f);
+    public Color BarColor
+    {
+        get => hpBarContentImage.color;
+        set => hpBarContentImage.color = value;
+    }
 
-    public short HP { get; set; } = 100;
+    public float BarWidth
+    {
+        get => hpBar.rect.width;
+        set => hpBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, value);
+    }
 
-    public short MaxHP { get; set; } = 100;
+    private short _HP = 100;
+
+    public short HP
+    {
+        get => _HP;
+        set
+        {
+            _HP = value;
+            UpdateHP();
+        }
+    }
+
+    private short _MaxHP = 100;
+
+    public short MaxHP
+    {
+        get => _MaxHP;
+        set
+        {
+            _MaxHP = value;
+            UpdateHP();
+        }
+    }
+
+    public string DisplayName
+    {
+        get => displayNameText.text;
+        set
+        {
+            bool empty = string.IsNullOrEmpty(value);
+            displayNameText.enabled = !empty;
+            displayNameText.text = empty ? "" : value;
+        }
+    }
 
     public bool Visible { get; set; } = true;
+
+    public float Offset { get; set; } = 60;
 
     [SerializeField]
     RectTransform root;
 
     [SerializeField]
     Text hpText;
+
+    [SerializeField]
+    Text displayNameText;
+
+    [SerializeField]
+    RectTransform hpBar;
 
     [SerializeField]
     RectTransform hpBarParent;
@@ -33,12 +82,9 @@ public class HealthBar : MonoBehaviour
 
     bool used = false;
 
-    float ofssetY = 60;
-
-    public void Initialize(Transform targetPos, Camera overlayCam, float ofssetY = 60)
+    public void Initialize(Transform targetPos, Camera overlayCam)
     {
         this.targetPos = targetPos;
-        this.ofssetY = ofssetY;
 
         canvas = GetComponent<Canvas>();
         hpBarContentImage = hpBarContent.GetComponent<Image>();
@@ -69,19 +115,19 @@ public class HealthBar : MonoBehaviour
         if (display)
         {
             // 座標
-            screenPos.y = Mathf.Min(screenPos.y + ofssetY, Screen.height - root.sizeDelta.y);
+            screenPos.y = Mathf.Min(screenPos.y + Offset, Screen.height - root.sizeDelta.y);
             canvas.planeDistance = screenPos.z;
             root.anchoredPosition = screenPos;
-
-            // テキスト
-            hpText.text = $"{HP}/{MaxHP}";
-
-            // HPバー横幅
-            float hpPer = MaxHP == 0 ? 0F : Mathf.Clamp01((float)HP / MaxHP);
-            hpBarContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, hpBarParent.rect.width * hpPer);
-
-            // HPバー色
-            hpBarContentImage.color = BarColor;
         }
+    }
+
+    void UpdateHP()
+    {
+        // テキスト
+        hpText.text = $"{HP}/{MaxHP}";
+
+        // HPバー横幅
+        float hpPer = MaxHP == 0 ? 0F : Mathf.Clamp01((float)HP / MaxHP);
+        hpBarContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, hpBarParent.rect.width * hpPer);
     }
 }
