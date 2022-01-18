@@ -19,20 +19,10 @@ public enum GamePhase
     Count
 }
 
-public enum Team : int
-{
-    Unassigned = 0,
-    Observer = 1,
-    TeamA = 2,
-    TeamB = 3,
-    TeamC = 4,
-    NPC = 5
-}
-
 public class DevGameManager : MonoBehaviourPunCallbacks
 {
-    public const int CountDownDurationMS = 1000 * 10; // 10sec
-    public const int EditScriptDurationMS = 1000 * 30; // 30sec
+    public const int CountDownDurationMS = 1000 * 1; // 1sec
+    public const int EditScriptDurationMS = 1000 * 1; // 1sec
 
     public int MatchTime
     {
@@ -51,6 +41,9 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     private Dictionary<int, Team> teamAssignDic = new();
 
     [SerializeField]
+    private GameObject overlayUI;
+
+    [SerializeField]
     private GameObject matchMakingUI;
 
     [SerializeField]
@@ -62,6 +55,8 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject battleUI;
 
+    private HealthBarFactory healthBarFactory;
+
     void OnGUI()
     {
         GUILayout.Window(2, new(10, 220, 200, 1), _ =>
@@ -70,18 +65,23 @@ public class DevGameManager : MonoBehaviourPunCallbacks
             GUILayout.Label($"MatchTime: {MatchTime}");
         }, "GameState");
     }
+
     void Awake()
     {
+        healthBarFactory = GetComponent<HealthBarFactory>();
+
         if (PhotonNetwork.IsMasterClient)
         {
             foreach (var i in Enumerable.Range(1, 20))
             {
-                PhotonNetwork.Instantiate(
+                var enemy = PhotonNetwork.Instantiate(
                     "DevEnemy",
                     new(Random.Range(-12, 12), 1, Random.Range(-12, 12)),
                     Quaternion.identity);
+                healthBarFactory.AssignToCharacter(enemy);
             }
         }
+
         StartMatchMakingPhase();
         
     }
@@ -150,7 +150,7 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     {
         if (CurrentPhase == GamePhase.MatchMaking)
         {
-            photonView.RPC(nameof(AssignTeamImpl), RpcTarget.All, player.ActorNumber, (int)team);
+            photonView.RPC(nameof(AssignTeamImpl), RpcTarget.All, player.ActorNumber, (byte)team);
         }
     }
 
@@ -160,7 +160,7 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         {
             foreach (var (playerId, team) in teamAssignDic)
             {
-                photonView.RPC(nameof(AssignTeamImpl), newPlayer, playerId, (int)team);
+                photonView.RPC(nameof(AssignTeamImpl), newPlayer, playerId, (byte)team);
             }
         }
     }
@@ -179,7 +179,7 @@ public class DevGameManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void AssignTeamImpl(int playerId, int teamId)
+    private void AssignTeamImpl(int playerId, byte teamId)
     {
         teamAssignDic[playerId] = (Team)teamId;
     }
@@ -222,8 +222,10 @@ public class DevGameManager : MonoBehaviourPunCallbacks
             "DevPlayer",
             new(0, 0.5f, 0),
             Quaternion.identity);
-        var script = player.GetComponent<ScriptMachine>();
-        script.enabled = true;
+        healthBarFactory.AssignToCharacter(player, 50);
+
+        player.GetComponent<ScriptMachine>().enabled = true;
+        player.GetComponent<Character>().Team = GetAssignedTeam(PhotonNetwork.LocalPlayer);
     }
 
 }

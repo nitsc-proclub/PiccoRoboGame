@@ -5,6 +5,17 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum Team : byte
+{
+    Unassigned,
+    Observer,
+    TeamA,
+    TeamB,
+    TeamC,
+    NPC,
+    Count
+}
+
 [RequireComponent(typeof(PhotonView))]
 public class Character : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -13,7 +24,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// <summary>
     /// チームID
     /// </summary>
-    public byte TeamID = 0;
+    public Team Team = Team.Unassigned;
 
     /// <summary>
     /// HP
@@ -51,7 +62,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     private bool statusChanged = true;
 
-    private byte _TeamID = 0;
+    private Team _Team = 0;
 
     private short _HP = 100;
 
@@ -61,19 +72,19 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
         {
             // 値が変わったときのみ同期
             if(statusChanged || 
-               TeamID != _TeamID || 
+               Team != _Team || 
                HP != _HP)
             {
-                TeamID = _TeamID;
+                Team = _Team;
                 HP = _HP;
 
-                stream.SendNext(TeamID);
+                stream.SendNext((byte)Team);
                 stream.SendNext(HP);
             }
         }
         else
         {
-            TeamID = (byte)stream.ReceiveNext();
+            Team = (Team)(byte)stream.ReceiveNext();
             HP = (short)stream.ReceiveNext();
         }
     }
