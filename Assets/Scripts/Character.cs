@@ -47,7 +47,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// DisplayKindがCustomのときに表示するテキスト
     /// </summary>
     public string DisplayText = "";
-    
+
     /// <summary>
     /// キルされた回数
     /// </summary>
@@ -85,38 +85,46 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     private short _HP = 100;
 
+    private short _MaxHP = 100;
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if(stream.IsWriting)
+        if (stream.IsWriting)
         {
             bool displayChanged = Display != _Display;
 
             // 値が変わったときのみ同期
-            if (statusChanged ||
-               displayChanged ||
-               Team != _Team || 
-               HP != _HP)
+            if (!statusChanged &&
+               !displayChanged &&
+               Team == _Team &&
+               MaxHP == _MaxHP &&
+               HP == _HP)
             {
-                Team = _Team;
-                HP = _HP;
-                Display = _Display;
+                return;
+            }
 
-                stream.SendNext((byte)Team);
-                stream.SendNext(HP);
-                stream.SendNext((byte)Display);
+            _Team = Team;
+            _HP = HP;
+            _MaxHP = MaxHP;
+            _Display = Display;
 
-                bool sendDisplayText = displayChanged && Display == DisplayKind.Custom;
-                stream.SendNext(sendDisplayText);
-                if (sendDisplayText)
-                {
-                    stream.SendNext(DisplayText);
-                }
+            stream.SendNext((byte)Team);
+            stream.SendNext(HP);
+            stream.SendNext(MaxHP);
+            stream.SendNext((byte)Display);
+
+            bool sendDisplayText = displayChanged && Display == DisplayKind.Custom;
+            stream.SendNext(sendDisplayText);
+            if (sendDisplayText)
+            {
+                stream.SendNext(DisplayText);
             }
         }
         else
         {
             Team = (Team)(byte)stream.ReceiveNext();
             HP = (short)stream.ReceiveNext();
+            MaxHP = (short)stream.ReceiveNext();
             Display = (DisplayKind)(byte)stream.ReceiveNext();
 
             bool recieveDisplayText = (bool)stream.ReceiveNext();
@@ -169,7 +177,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
             {
                 CustomEvent.Trigger(gameObject, KilledEventName);
             }
-            if(AutoDestroy)
+            if (AutoDestroy)
             {
                 Destroy();
             }
@@ -180,11 +188,11 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 }
