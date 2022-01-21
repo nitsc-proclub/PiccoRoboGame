@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 459e4dace7f62c64d8f23b38d36a4907
+timeCreated: 1508029928
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: IPAPGothic
+  fontNames:
+  - IPAPGothic
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
