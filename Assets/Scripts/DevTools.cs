@@ -71,7 +71,7 @@ public class DevTools : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.JoinOrCreateRoom(SceneManager.GetActiveScene().name, new RoomOptions(), TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom(SceneManager.GetActiveScene().name, new RoomOptions{ PublishUserId = true }, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
@@ -103,7 +103,10 @@ public class DevTools : MonoBehaviourPunCallbacks
     {
         foreach (var gameObj in SceneManager.GetActiveScene().GetRootGameObjects())
         {
-            gameObj.SetActive(true);
+            if (gameObj.name == "GameManager")
+            {
+                gameObj.SetActive(true);
+            }
         }
     }
 }

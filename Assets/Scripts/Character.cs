@@ -5,6 +5,25 @@ using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum DisplayKind : byte
+{
+    None,
+    OwnerName,
+    Custom
+}
+
+public enum Team : byte
+{
+    Unassigned,
+    Observer,
+    TeamA,
+    TeamB,
+    TeamC,
+    NPC,
+    Count
+}
+
+[RequireComponent(typeof(PhotonView))]
 public class Character : MonoBehaviourPunCallbacks, IPunObservable
 {
     // --- ステータス ---
@@ -12,12 +31,22 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     /// <summary>
     /// チームID
     /// </summary>
-    public byte TeamID = 0;
+    public Team Team = Team.Unassigned;
 
     /// <summary>
     /// HP
     /// </summary>
     public short HP = 100;
+
+    /// <summary>
+    /// 表示名の種類
+    /// </summary>
+    public DisplayKind Display = DisplayKind.None;
+
+    /// <summary>
+    /// DisplayKindがCustomのときに表示するテキスト
+    /// </summary>
+    public string DisplayText = "";
 
     /// <summary>
     /// キルされた回数
@@ -50,30 +79,59 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     private bool statusChanged = true;
 
-    private byte _TeamID = 0;
+    private DisplayKind _Display = DisplayKind.None;
+
+    private Team _Team = 0;
 
     private short _HP = 100;
 
+    private short _MaxHP = 100;
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if(stream.IsWriting)
+        if (stream.IsWriting)
         {
-            // 値が変わったときのみ同期
-            if(statusChanged || 
-               TeamID != _TeamID || 
-               HP != _HP)
-            {
-                TeamID = _TeamID;
-                HP = _HP;
+            bool displayChanged = Display != _Display;
 
-                stream.SendNext(TeamID);
-                stream.SendNext(HP);
+            // 値が変わったときのみ同期
+            if (!statusChanged &&
+               !displayChanged &&
+               Team == _Team &&
+               MaxHP == _MaxHP &&
+               HP == _HP)
+            {
+                return;
+            }
+
+            _Team = Team;
+            _HP = HP;
+            _MaxHP = MaxHP;
+            _Display = Display;
+
+            stream.SendNext((byte)Team);
+            stream.SendNext(HP);
+            stream.SendNext(MaxHP);
+            stream.SendNext((byte)Display);
+
+            bool sendDisplayText = displayChanged && Display == DisplayKind.Custom;
+            stream.SendNext(sendDisplayText);
+            if (sendDisplayText)
+            {
+                stream.SendNext(DisplayText);
             }
         }
         else
         {
-            TeamID = (byte)stream.ReceiveNext();
+            Team = (Team)(byte)stream.ReceiveNext();
             HP = (short)stream.ReceiveNext();
+            MaxHP = (short)stream.ReceiveNext();
+            Display = (DisplayKind)(byte)stream.ReceiveNext();
+
+            bool recieveDisplayText = (bool)stream.ReceiveNext();
+            if (recieveDisplayText)
+            {
+                DisplayText = (string)stream.ReceiveNext();
+            }
         }
     }
 
@@ -85,7 +143,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         this.photonView.RPC(
             nameof(GetDamage),
-            this.photonView.Owner,
+            this.photonView.Owner ?? PhotonNetwork.MasterClient,
             damage);
     }
 
@@ -96,7 +154,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     {
         PhotonNetwork.Destroy(photonView);
     }
-    
+
     [PunRPC]
     private void GetDamage(short damage)
     {
@@ -119,7 +177,7 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
             {
                 CustomEvent.Trigger(gameObject, KilledEventName);
             }
-            if(AutoDestroy)
+            if (AutoDestroy)
             {
                 Destroy();
             }
@@ -130,11 +188,11 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 }
