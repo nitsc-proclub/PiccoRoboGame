@@ -22,6 +22,8 @@ public enum GamePhase
 
 public class DevGameManager : MonoBehaviourPunCallbacks
 {
+    public static DevGameManager Instance { get; private set; }
+
     public const int CountDownDurationMS = 1000 * 1; // 1sec
     public const int EditScriptDurationMS = 1000 * 1; // 1sec
 
@@ -30,6 +32,26 @@ public class DevGameManager : MonoBehaviourPunCallbacks
         get
         {
             return matchTime;
+        }
+    }
+
+    public int EditScriptsPhaseTime
+    {
+        get
+        {
+            return CurrentPhase == GamePhase.EditScripts 
+                ? matchTime - CountDownDurationMS 
+                : 0;
+        }
+    }
+
+    public int BattlePhaseTime
+    {
+        get
+        {
+            return CurrentPhase == GamePhase.Battle
+                ? matchTime - CountDownDurationMS - EditScriptDurationMS
+                : 0;
         }
     }
 
@@ -66,6 +88,8 @@ public class DevGameManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
+        Instance = this;
+
         healthBarFactory = GetComponent<HealthBarFactory>();
 
         if (PhotonNetwork.IsMasterClient)
@@ -132,6 +156,11 @@ public class DevGameManager : MonoBehaviourPunCallbacks
             case GamePhase.GameOver:
                 break;
         }
+    }
+
+    private void OnDestroy()
+    {
+        Instance = null;
     }
 
     public Team GetAssignedTeam()

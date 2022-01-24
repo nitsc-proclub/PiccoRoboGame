@@ -8,6 +8,8 @@ using UnityEngine.TextCore.Text;
 
 public class BattleManager : MonoBehaviour
 {
+    public static BattleManager Instance { get; private set; }
+
     [SerializeField]
     DevGameManager gameManager;
 
@@ -27,6 +29,8 @@ public class BattleManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
+
         healthBarFactory = GetComponent<HealthBarFactory>();
         healthBarFactory.AssignToCharacter(baseA.GetComponent<Character>(), 60);
         healthBarFactory.AssignToCharacter(baseB.GetComponent<Character>(), 60);
@@ -62,15 +66,8 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    void OnDestroy()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Instance = null;
     }
 }
